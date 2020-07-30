@@ -31,10 +31,12 @@ object CrawlerRoutes {
             onCompleteZio(service.getTitles(urls.toSeq).either) {
               case Failure(exc) =>
                 complete(StatusCodes.InternalServerError, s"Unexpected error [$exc]")
-              case Success(Left(CrawlerError.UnknownCrawlerError(exc))) =>
-                complete(StatusCodes.InternalServerError, s"Unknown error during web crawling [$exc]")
+              case Success(Left(CrawlerError.MalformedUrlError(exc))) =>
+                complete(StatusCodes.BadRequest, s"URL for the specified resource is incorrect. [$exc]")
               case Success(Left(CrawlerError.FailedHttpRequestError(status))) =>
                 complete(StatusCodes.BadRequest, s"Specified resource returned unexpected status code [$status]")
+              case Success(Left(CrawlerError.UnknownCrawlerError(exc))) =>
+                complete(StatusCodes.InternalServerError, s"Unknown error during web crawling [$exc]")
               case Success(Right(CrawlerResult.Success(links))) => complete(links)
             }
           }

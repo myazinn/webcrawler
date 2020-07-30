@@ -7,6 +7,7 @@ object SuccessfulHttpResponse {
 
 sealed trait FailedHttpResponse
 object FailedHttpResponse {
+  final case class MalformedUrlError(exc: Exception) extends FailedHttpResponse
   final case class UnsuccessfulResponseStatus(status: Int) extends FailedHttpResponse
   final case class UnknownError(exc: Exception) extends FailedHttpResponse
 }

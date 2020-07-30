@@ -9,6 +9,7 @@ object CrawlerResult {
 
 sealed trait CrawlerError
 object CrawlerError {
-  final case class UnknownCrawlerError(exc: Exception) extends CrawlerError
+  final case class MalformedUrlError(exc: Exception) extends CrawlerError
   final case class FailedHttpRequestError(status: Int) extends CrawlerError
+  final case class UnknownCrawlerError(exc: Exception) extends CrawlerError
 }

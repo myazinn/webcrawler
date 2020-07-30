@@ -27,6 +27,7 @@ object CrawlerService {
 
         private def httpErrorToCrawlerError(httpResponse: FailedHttpResponse): CrawlerError = httpResponse match {
           case FailedHttpResponse.UnsuccessfulResponseStatus(status) => CrawlerError.FailedHttpRequestError(status)
+          case FailedHttpResponse.MalformedUrlError(exc) => CrawlerError.MalformedUrlError(exc)
           case FailedHttpResponse.UnknownError(exc) => CrawlerError.UnknownCrawlerError(exc)
         }
       }

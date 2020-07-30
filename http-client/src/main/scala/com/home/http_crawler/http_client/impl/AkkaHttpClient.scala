@@ -19,12 +19,17 @@ object AkkaHttpClient {
         private val timeout = 5.second
 
         override def get(url: String): IO[FailedHttpResponse, SuccessfulHttpResponse] = {
-          val request = HttpRequest(HttpMethods.GET, Uri(url))
           for {
+            request <- makeRequest(url)
             akkaResponse <- sendRequest(request)
             response <- akkaResponseToResponse(akkaResponse)
           } yield response
         }
+
+        private def makeRequest(url: String): IO[FailedHttpResponse, HttpRequest] =
+          ZIO.effect(HttpRequest(HttpMethods.GET, Uri(url))).refineOrDie {
+            case exc: Exception => FailedHttpResponse.MalformedUrlError(exc)
+          }
 
         private def sendRequest(request: HttpRequest): IO[FailedHttpResponse, HttpResponse] = {
           ZIO.fromFuture(_ => Http().singleRequest(request)).refineOrDie {
